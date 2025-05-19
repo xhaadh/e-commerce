@@ -1,11 +1,13 @@
 // src/components/LoginPage.jsx
-import React, { useEffect, useState } from "react";
+import React, { useState, useContext } from "react";
 import { FaApple, FaGoogle } from "react-icons/fa";
 import { FiUser, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import heroImg from "../assets/person2.webp";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from '../contexts/AuthContext';
 
 const LoginPage = () => {
+   const { login } = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -13,47 +15,19 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (localStorage.getItem('token')) {
-      navigate('/dashboard', { replace: true });
-    }
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    const formData = new URLSearchParams();
-    formData.append("username", username);
-    formData.append("password", password);
-
-    try {
-      const response = await fetch(
-        "https://primemlmsoftware.in/commondemo/member/Auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-          body: formData.toString(),
-        }
-      );
-      const data = await response.json();
-
-      if (data?.token) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        navigate("/dashboard", { replace: true });
-      } else {
-        setError(data?.message || "Invalid credentials, please try again.");
-      }
-    } catch (err) {
-      console.error("Login error:", err);
-      setError("Network error. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
+    const { success, message } = await login(username, password);
+    if (success) {
+      navigate('/dashboard', { replace: true });
+    } else {
+      setError(message);
+     }
+     setLoading(false);
+  
   };
 
   return (

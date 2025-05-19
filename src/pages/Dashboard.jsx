@@ -1,5 +1,5 @@
 // src/components/Dashboard
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { 
   FiHome, 
   FiUsers, 
@@ -13,19 +13,20 @@ import {
   FiX
 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext';
 
 const AdminPanel = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isMobile, setIsMobile] = useState(false);
 
+  const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
   
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      // On desktop, show sidebar by default (collapsed)
       if (!mobile) {
         setSidebarOpen(true);
       } else {
@@ -43,11 +44,8 @@ const AdminPanel = () => {
   };
 
   const handleLogout = () => {
-    // Clear authentication data
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    // Redirect to login page
-    navigate('/login');
+    logout();
+    navigate('/login', { replace: true });
   };
   
   const navItems = [
@@ -191,7 +189,6 @@ const AdminPanel = () => {
   );
 };
 
-// Content Components (keep all your existing content components exactly as they are)
 const DashboardContent = () => {
   const stats = [
     { title: 'Total Users', value: '2,420', change: '+12%', trend: 'up' },
@@ -436,7 +433,7 @@ const SettingsContent = () => (
             <input
               type="text"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              defaultValue="John Doe"
+              
             />
           </div>
           <div>
@@ -444,7 +441,7 @@ const SettingsContent = () => (
             <input
               type="email"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              defaultValue="john@example.com"
+              
             />
           </div>
         </div>

@@ -5,6 +5,8 @@ import Home from "./pages/Home";
 import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
 import PublicLayout from "./layouts/PublicLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import UnauthenticatedRoute from "./components/UnauthenticatedRoute";
 
 const App = () => {
   return (
@@ -16,16 +18,21 @@ const App = () => {
             <Route index element={<Home />} />
             <Route path="/" element={<Home />} />
           </Route>
-          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/login"
+            element={
+              <UnauthenticatedRoute>
+                <LoginPage />
+              </UnauthenticatedRoute>
+            }
+          />
           {/* Only access when user is logged in */}
           <Route
             path="/dashboard"
             element={
-              localStorage.getItem("token") ? (
+              <ProtectedRoute>
                 <Dashboard />
-              ) : (
-                <Navigate to="/login" replace />
-              )
+              </ProtectedRoute>
             }
           />
         </Routes>
