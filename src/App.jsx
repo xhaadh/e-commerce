@@ -1,12 +1,12 @@
 // src/App.jsx
 import React from "react";
-import { HashRouter, Routes, Route} from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/Dashboard";
 import PublicLayout from "./layouts/PublicLayout";
-import ProtectedRoute from './components/ProtectedRoute';
-
+import ProtectedRoute from "./components/ProtectedRoute";
+import UnauthenticatedRoute from "./components/UnauthenticatedRoute";
 
 const App = () => {
   return (
@@ -17,16 +17,23 @@ const App = () => {
           <Route element={<PublicLayout />}>
             <Route index element={<Home />} />
           </Route>
-          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/login"
+            element={
+              <UnauthenticatedRoute>
+                <LoginPage />
+              </UnauthenticatedRoute>
+            }
+          />
           {/* Only access when user is logged in */}
-           <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </HashRouter>
     </>
